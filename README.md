@@ -17,3 +17,6 @@ shows you commands to control slurm, use scontrol ping to check if the slurm is 
 in case you want to check the resources for that compute node.
 - htop -u < username >
 helps you look at if your job is indeed running
+
+
+Useful links to documentations (samples)[https://help.rc.ufl.edu/doc/Sample_SLURM_Scripts#Sample_SLURM_Scripts] and (docs)[https://slurm.schedmd.com/documentation.html] and other (links)[https://riffomonas.org/code_club/2021-07-21-slurm]

@@ -8,4 +8,9 @@
 #SBATCH --output=array_%A-%a.log    # Standard output and error log
 #SBATCH --array=1-5                 # Array range
 
-echo This is task $SLURM_ARRAY_TASK_ID
+SEED=$((SLURM_ARRAY_TASK_ID))
+echo $SEED
+
+module load python/3
+
+python write.py $SLURM_ARRAY_TASK_ID
