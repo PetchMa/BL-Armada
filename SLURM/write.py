@@ -14,17 +14,17 @@ def func(num):
 
 a_pool = Pool(CORES)
 start = time.time()
-result = a_pool.map(func, range(10000000))
+result = a_pool.map(func, range(10000000000))
 print("time taken: "+str(time.time()-start))
 
 save_path = './'
-name_of_file = 'test_document-'+str(sys.argv[1])
+name_of_file = 'test_document-'+str(1)
 completeName = os.path.join(save_path, name_of_file+".txt")         
 
 file1 = open(completeName, "w")
 
 toFile =str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-
+print(toFile)
 file1.write(toFile)
 
 file1.close()

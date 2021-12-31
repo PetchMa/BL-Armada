@@ -7,5 +7,5 @@ done
 
 for VARIABLE in 0 1 2
 do
-    ssh blpc$VARIABLE bash BL-Armada/spawn_subcontainers.sh -u $num_instances
+    ssh blpc$VARIABLE bash BL-Armada/spawn_subcontainers.sh -u $num_instances -a $VARIABLE
 done
