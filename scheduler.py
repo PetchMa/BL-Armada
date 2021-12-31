@@ -10,7 +10,7 @@ import logging
 logger = logging.getLogger('server_logger')
 logger.setLevel(logging.DEBUG)
 # create file handler which logs even debug messages
-fh = logging.FileHandler('logs/schedule.log')
+fh = logging.FileHandler('logs/scheduler.log')
 fh.setLevel(logging.DEBUG)
 # create console handler with a higher log level
 ch = logging.StreamHandler()
@@ -24,20 +24,31 @@ logger.addHandler(ch)
 logger.addHandler(fh)
 
 
-logger.info("scheduler")
-# port = "5556"
-# if len(sys.argv) > 1:
-#     port =  sys.argv[1]
-#     int(port)
-
-# context = zmq.Context()
-# socket = context.socket(zmq.PUB)
-# socket.bind("tcp://*:%s" % port)
+logger.info("Starting Scheduler")
 
 
-# while True:
-#     topic = random.randrange(9999,10005)
-#     messagedata = random.randrange(1,215) - 80
-#     print "%d %d" % (topic, messagedata)
-#     socket.send("%d %d" % (topic, messagedata))
-#     time.sleep(1)
+def result_collector():
+    collection_status = {}
+    while True:
+        print("awaiting...")
+        context = zmq.Context()
+        results_receiver = context.socket(zmq.PULL)
+        results_receiver.bind("tcp://127.0.0.1:9000")
+        result = results_receiver.recv_pyobj()
+        node = result['node']
+        collection_status[str(node)] = result
+        print(collection_status)
+        for key in collection_status.keys():
+            if collection_status[key]['status'] =="idle":
+                time.sleep(10)
+                publisher = context.socket(zmq.PUB)
+                publisher.bind("tcp://127.0.0.1:9001")
+                task = {}
+                task['node'] = collection_status[key]['node']
+                task['work'] = "compute this chunk of data"
+                # socket.send_pyobj(task)
+                publisher.send(str(task['node'])+"-task for this node")
+
+                print("task sent to -", str(collection_status[key]['node']))
+
+result_collector()

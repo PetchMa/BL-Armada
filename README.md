@@ -28,3 +28,4 @@ And to clear everything and stop the all containers
 bash stop.sh
 ```
 ## Networking
+The networking aspect is simple. The scheduler collects the status of the workers by pulling from the pushes from the 
