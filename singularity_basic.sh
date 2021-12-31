@@ -1,0 +1,1 @@
+singularity run ../peterma-ml
