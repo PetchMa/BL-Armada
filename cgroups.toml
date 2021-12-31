@@ -1,0 +1,4 @@
+[memory]
+    limit = 30000000000
+[cpu]
+    shares = 128
