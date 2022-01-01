@@ -1,5 +1,5 @@
 # BL-Armada 🛳
-Breakthrough Listen Armada - internal on-prem "custom orchestration" for distributed ML work. Used to spawn a fleet of workloads to process data. Facilitates some basic networking infrastructure to monitor and distribute workload in a round robin fashion. 
+Breakthrough Listen Armada - internal "custom orchestration" for some distributed ML work. Used to spawn workloads to process data. Facilitates some basic networking infrastructure to monitor and distribute workload in a round robin fashion. 
 
 ## Spawn Containers
 In a series of scripts spawning containers has been made possible to initalize the enviroments. The way in which the containers are spwaned follows a simple series of threaded commands. 
