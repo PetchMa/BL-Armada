@@ -3,6 +3,15 @@ import zmq
 import logging
 import time
 
+def sub_collect(port):
+    context = zmq.Context()
+    socket = context.socket(zmq.SUB)
+    socket.connect ("tcp://localhost:"+str(port))
+    topicfilter = ""
+    socket.setsockopt(zmq.SUBSCRIBE, topicfilter)
+
+    result = socket.recv_pyobj()
+    return result
 
 compute_node = sys.argv[1]
 
@@ -35,25 +44,30 @@ def consumer():
     consumer_sender.connect("tcp://127.0.0.1:9000")
     worker_status = {}
     worker_status['node'] = compute_node
-    
+    worker_status['status'] = 'idle'
+    worker_status['task']= '' 
+    consumer_sender.send_pyobj(worker_status)
     while True:
-        worker_status['status'] = 'starting'
-        print(worker_status)
-        consumer_sender.send_pyobj(worker_status)
-        time.sleep(10)
-        worker_status['status'] = 'busy'
-        print(worker_status)
-        consumer_sender.send_pyobj(worker_status)
-        time.sleep(10)
-        worker_status['status'] = 'idle'
-        print(worker_status)
         # take care of getting new task 
         print("Waiting for new tasks....")
+        print(worker_status)
         consumer_sender.send_pyobj(worker_status)
-        context = zmq.Context()
-        SUB_SCRIBER = context.socket(zmq.SUB)
-        SUB_SCRIBER.connect("tcp://127.0.0.1:9001")
-        task = SUB_SCRIBER.recv()
-        print(task)
+        flag = True
+        while flag:
+            task = sub_collect(2000)
+            if task['node']==compute_node:
+                worker_status['task'] = task['job']
+                worker_status['status'] = 'busy'
+                print(worker_status)
+                consumer_sender.send_pyobj(worker_status)
+                flag = False
+            else:
+                print("did not get task for this machine")
+        time.sleep(20)
+        print("done JOB! Now Idle")
+        worker_status['status'] = 'idle'
+        worker_status['task']= '' 
+        
+
 
 consumer()

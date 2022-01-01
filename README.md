@@ -28,4 +28,7 @@ And to clear everything and stop the all containers
 bash stop.sh
 ```
 ## Networking
-The networking aspect is simple. The scheduler collects the status of the workers by pulling from the pushes from the 
+The networking aspect is simple. The scheduler collects the status of the workers by pulling, and the pushes come from the containers. The messages will reference which compute node it came from. Then the scheduler loops through the status of the nodes and 
+if the node is idle, we give it a job by publishing openly to a port which the idle node is subscribed to. The idle node checks that 
+it is meant to run this job and then the compute node gets busy and is updated. 
+![alt text](network_pattern.png)

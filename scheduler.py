@@ -5,7 +5,17 @@ import random
 import sys
 import time
 import logging
+import time
 
+def publish(port, data, ticks=2):
+    context = zmq.Context()
+    socket = context.socket(zmq.PUB)
+    socket.bind("tcp://*:%s" % 2000)
+    count =0
+    while count <ticks:
+        socket.send_pyobj(data)
+        time.sleep(1)
+        count+=1
 
 logger = logging.getLogger('server_logger')
 logger.setLevel(logging.DEBUG)
@@ -22,33 +32,29 @@ fh.setFormatter(formatter)
 # add the handlers to logger
 logger.addHandler(ch)
 logger.addHandler(fh)
-
-
 logger.info("Starting Scheduler")
 
 
 def result_collector():
     collection_status = {}
     while True:
-        print("awaiting...")
         context = zmq.Context()
         results_receiver = context.socket(zmq.PULL)
         results_receiver.bind("tcp://127.0.0.1:9000")
         result = results_receiver.recv_pyobj()
+        print(result)
         node = result['node']
         collection_status[str(node)] = result
-        print(collection_status)
+        # print(collection_status)
+
         for key in collection_status.keys():
             if collection_status[key]['status'] =="idle":
-                time.sleep(10)
-                publisher = context.socket(zmq.PUB)
-                publisher.bind("tcp://127.0.0.1:9001")
                 task = {}
-                task['node'] = collection_status[key]['node']
-                task['work'] = "compute this chunk of data"
-                # socket.send_pyobj(task)
-                publisher.send(str(task['node'])+"-task for this node")
-
-                print("task sent to -", str(collection_status[key]['node']))
+                task['node'] = collection_status[key]['node'] 
+                task['job'] = " compute this stuff here"
+                publish(2000, task)
+                print("Delivered Task")
+                result = results_receiver.recv_pyobj()
+                print(result)
 
 result_collector()
